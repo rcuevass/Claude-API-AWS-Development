@@ -1,3 +1,9 @@
+# Setup instructions
+
+This markdown captures the basic instructions to create a virtual uv environment needed for the proper functioning of the code in this repository.
+
+Gitbash on a Windows machine is assumed througout.
+
 #### Install all required packages from `pyproject.toml`
 
 `uv sync --active`
