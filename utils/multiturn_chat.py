@@ -66,3 +66,20 @@ def trigger_interactive_chat(temperature_value: float = 1.0):
         add_assistant_message(messages=messages, text=answer)
 
 
+def streaming_messages(text_msg: str, model_selected: str = "claude-sonnet-4-6",
+                       num_max_tokens: int = 1000, print_message: bool = True):
+    messages_lst = []
+    add_user_message(messages_lst, text=text_msg)
+    with client.messages.stream(
+        model=model_selected,
+        max_tokens=num_max_tokens,
+        messages=messages_lst) as stream:
+            for text in stream.text_stream:
+                if print_message:
+                    print(text, end="")
+                else:
+                    pass
+    
+    stored_events = stream.get_final_message()
+    return stored_events
+    
