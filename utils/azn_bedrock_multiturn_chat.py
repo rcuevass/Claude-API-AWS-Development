@@ -70,3 +70,33 @@ def trigger_interactive_chat(temperature_value: float = 1.0):
         #
         add_assistant_message(messages=messages, text=answer)
 
+
+def azn_streaming_messages(text_msg: str, model_id: str = "us.anthropic.claude-sonnet-4-6",
+                           print_event: bool = True, loop_over_stream: bool = True):
+    messages_lst = []
+    add_user_message(messages=messages_lst, text=text_msg)
+    # notice the signature below for model identification: modelId
+    response = client.converse_stream(messages=messages_lst, modelId=model_id)
+
+    # printing this response takes place almost immediately (~ 1 sec),
+    # this response does not include any genearated text, instead it generates stream as an
+    # event stream object - it is a generates that we can iterate over ("stream" key)
+    if print_event:
+        print(response)
+
+    print("======"*7)
+
+    if loop_over_stream:
+        for event in response["stream"]:
+            print(event)
+
+    print("======"*7)
+
+    text = ""
+    for event in response["stream"]:
+        if "contentBlockDelta" in event:
+            chunk_txt = event["contentBlockDelta"]["delta"]["text"]
+            print(chunk_txt, end="")
+            text += chunk_txt
+
+    return "\n\nTotal Message:\n" + text
